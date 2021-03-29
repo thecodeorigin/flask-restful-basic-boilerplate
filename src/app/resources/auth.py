@@ -34,7 +34,12 @@ class AuthRegister(Resource):
     user = UserModel(None, **body) # ** is like ... in javascript
     user.save_to_db()
 
-    return { 'message': 'User created successfully' }, 201
+    access_token, refresh_token = generateTokens(user)
+    return { 
+      'message': 'User created successfully',
+      'access_token': access_token, 
+      'refresh_token': refresh_token,
+    }, 201
 
 
 class AuthLogin(Resource):
@@ -60,20 +65,8 @@ class AuthLogin(Resource):
     
     # check password
     if user and self.isCorrectPassword(user.password, body['password']):
-      # create access token
-      access_token = create_access_token(
-        identity={ 'id': user.id, 'username': user.username },
-        fresh=True,
-      )
-      # create refresh token
-      refresh_token = create_refresh_token(
-        identity={ 'id': user.id, 'username': user.username },
-      )
-      # returns
-      return {
-        'access_token': access_token,
-        'refresh_token': refresh_token,
-      }, 200
+      access_token, refresh_token = generateTokens(user)
+      return { 'access_token': access_token, 'refresh_token': refresh_token, }, 200
     
     return { 'message': 'Invalid credentials' }, 401
   
@@ -83,3 +76,17 @@ class AuthLogin(Resource):
     hashed_password_in_bytes = hashed_password.encode('ascii')
 
     return checkpw(password_in_bytes, hashed_password_in_bytes)
+
+
+def generateTokens(user):
+  # create access token
+  access_token = create_access_token(
+    identity={ 'id': user.id, 'username': user.username },
+    fresh=True,
+  )
+  # create refresh token
+  refresh_token = create_refresh_token(
+    identity={ 'id': user.id, 'username': user.username },
+  )
+
+  return (access_token, refresh_token)

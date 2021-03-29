@@ -8,7 +8,7 @@ load_dotenv(dotenv_path=env_path)
 
 class ConfigEnv:
   ENV = os.getenv('ENV') or 'development'
-  SECRET_KEY = os.getenv('SECRET_KEY')
+  JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
   DEBUG = os.getenv('DEBUG') == 'True'
 
   SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
@@ -22,7 +22,7 @@ class ConfigEnv:
 def config_env(app):
   app.config.update(
     ENV = ConfigEnv.ENV,
-    SECRET_KEY = ConfigEnv.SECRET_KEY,
+    JWT_SECRET_KEY = ConfigEnv.JWT_SECRET_KEY,
     SQLALCHEMY_DATABASE_URI = ConfigEnv.SQLALCHEMY_DATABASE_URI,
     SQLALCHEMY_TRACK_MODIFICATIONS = ConfigEnv.SQLALCHEMY_TRACK_MODIFICATIONS,
     JWT_AUTH_HEADER_PREFIX = ConfigEnv.JWT_AUTH_HEADER_PREFIX,

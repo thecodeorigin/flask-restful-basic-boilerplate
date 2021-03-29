@@ -17,7 +17,6 @@ class UserModel(db.Model):
     return {
       'id': self.id,
       'username': self.username,
-      'password': self.password,
     }
   
   @classmethod

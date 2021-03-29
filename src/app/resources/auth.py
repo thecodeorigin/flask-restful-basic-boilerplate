@@ -4,7 +4,7 @@ from bcrypt import hashpw, gensalt
 
 from ..models.user import UserModel
 
-class UserRegister(Resource):
+class AuthRegister(Resource):
   parser = reqparse.RequestParser()
   parser.add_argument(
     'username',
@@ -20,7 +20,7 @@ class UserRegister(Resource):
   )
 
   def post(self):
-    body = UserRegister.parser.parse_args()
+    body = AuthRegister.parser.parse_args()
 
     if UserModel.find_by_username(body['username']):
       return { 'message': 'A user with that username already exists' }, 400

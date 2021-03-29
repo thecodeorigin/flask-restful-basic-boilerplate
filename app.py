@@ -1,7 +1,6 @@
 import os
 
 from flask import Flask
-from flask_restful import Api
 
 from src.config.env import config_env
 from src.database.db import db, synchronize_db

@@ -1,5 +1,7 @@
 from flask_jwt_extended import JWTManager
 
+from ..common.variables.blocklist import BLOCKLIST
+
 def config_jwt(app):
   jwt = JWTManager(app)
 
@@ -69,7 +71,7 @@ def config_jwt(app):
   @jwt.revoked_token_loader
   def revoked_token_callback(jwt_header, jwt_payload):
     """
-    This method is called when the token has been revoked.
+    This method is called when the token has been revoked (example: blocklist).
     
     :jwt_header & :jwt_payload is the compulsory params for this method,
     they contains header & payload of the expired token.
@@ -78,3 +80,14 @@ def config_jwt(app):
       'error': 'token_revoked',
       'message': 'The token has been revoked'
     }, 401
+  
+  @jwt.token_in_blocklist_loader
+  def check_if_token_in_blocklist(jwt_header, jwt_payload):
+    """
+    This method is called whenever a request required a token. It would check
+    if the token id was in the blocklist (i.e: logged out), if it does, call revoked callback
+    
+    :jwt_header & :jwt_payload is the compulsory params for this method,
+    they contains header & payload of the expired token.
+    """
+    return jwt_payload['jti'] in BLOCKLIST

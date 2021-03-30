@@ -16,10 +16,11 @@ class ConfigEnv:
   SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') or False
 
   JWT_AUTH_HEADER_PREFIX = os.getenv('JWT_AUTH_HEADER_PREFIX') or 'Bearer'
-  # Replace default attributes: ['exp', 'iat', 'nbf']
-  JWT_REQUIRED_CLAIMS = os.getenv('JWT_REQUIRED_CLAIMS') or []
+  JWT_REQUIRED_CLAIMS = os.getenv('JWT_REQUIRED_CLAIMS') or [] # Replace default attributes: ['exp', 'iat', 'nbf']
   JWT_ACCESS_TOKEN_EXPIRES = os.getenv('JWT_ACCESS_TOKEN_EXPIRES') or timedelta(hours=1)
   JWT_REFRESH_TOKEN_EXPIRES = os.getenv('JWT_REFRESH_TOKEN_EXPIRES') or timedelta(days=30)
+  JWT_BLACKLIST_ENABLED = os.getenv('JWT_BLACKLIST_ENABLED') == 'True'
+  JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 
 
 def config_env(app):
@@ -32,4 +33,6 @@ def config_env(app):
     JWT_REQUIRED_CLAIMS = ConfigEnv.JWT_REQUIRED_CLAIMS,
     JWT_ACCESS_TOKEN_EXPIRES = ConfigEnv.JWT_ACCESS_TOKEN_EXPIRES,
     JWT_REFRESH_TOKEN_EXPIRES = ConfigEnv.JWT_REFRESH_TOKEN_EXPIRES,
+    JWT_BLACKLIST_ENABLED = ConfigEnv.JWT_BLACKLIST_ENABLED,
+    JWT_BLACKLIST_TOKEN_CHECKS = ConfigEnv.JWT_BLACKLIST_TOKEN_CHECKS,
   )

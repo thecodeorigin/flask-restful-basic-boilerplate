@@ -2,10 +2,11 @@ import sqlite3
 
 from flask_restful import Resource, reqparse
 from bcrypt import hashpw, gensalt, checkpw
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, get_jwt
 
 from ..models.user import UserModel
 from ...common.helpers.jwt import generateTokens
+from ...common.variables.blocklist import BLOCKLIST
 
 class AuthRegister(Resource):
   parser = reqparse.RequestParser()
@@ -77,6 +78,15 @@ class AuthLogin(Resource):
     hashed_password_in_bytes = hashed_password.encode('ascii')
 
     return checkpw(password_in_bytes, hashed_password_in_bytes)
+
+
+class AuthLogout(Resource):
+  @jwt_required()
+  def post(self):
+    payload = get_jwt()
+    BLOCKLIST.add(payload['jti'])
+    
+    return { 'message': 'Successfully logged out' }, 200
 
 
 class TokenRefresh(Resource):

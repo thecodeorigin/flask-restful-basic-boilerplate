@@ -1,6 +1,7 @@
 from flask_jwt_extended import JWTManager
 
 from ..common.variables.blocklist import BLOCKLIST
+from ..common.constants.error_type import ErrorType
 
 def config_jwt(app):
   jwt = JWTManager(app)
@@ -28,7 +29,7 @@ def config_jwt(app):
     they contains header & payload of the expired token.
     """
     return {
-      'error': 'token_expired',
+      'error': ErrorType.token_expired,
       'message': 'The token has expired',
     }, 401
 
@@ -39,7 +40,7 @@ def config_jwt(app):
     So it raise an error, and handle it here.
     """
     return {
-      'error': 'invalid_token',
+      'error': ErrorType.invalid_token,
       'message': 'Token verification failed',
     }, 401
   
@@ -50,7 +51,7 @@ def config_jwt(app):
     send the token in 'Authorization' header
     """
     return {
-      'error': 'unauthorized',
+      'error': ErrorType.unauthorized,
       'message': 'JWT token not provided'
     }, 401
 
@@ -64,7 +65,7 @@ def config_jwt(app):
     they contains header & payload of the expired token.
     """
     return {
-      'error': 'fresh_token_required',
+      'error': ErrorType.fresh_token_required,
       'message': 'The token is not fresh'
     }, 401
 
@@ -77,7 +78,7 @@ def config_jwt(app):
     they contains header & payload of the expired token.
     """
     return {
-      'error': 'token_revoked',
+      'error': ErrorType.token_revoked,
       'message': 'The token has been revoked'
     }, 401
   

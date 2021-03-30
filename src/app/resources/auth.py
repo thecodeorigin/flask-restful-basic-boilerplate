@@ -2,9 +2,10 @@ import sqlite3
 
 from flask_restful import Resource, reqparse
 from bcrypt import hashpw, gensalt, checkpw
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 
 from ..models.user import UserModel
+from ...common.helpers.jwt import generateTokens
 
 class AuthRegister(Resource):
   parser = reqparse.RequestParser()
@@ -78,15 +79,10 @@ class AuthLogin(Resource):
     return checkpw(password_in_bytes, hashed_password_in_bytes)
 
 
-def generateTokens(user):
-  # create access token
-  access_token = create_access_token(
-    identity={ 'id': user.id, 'username': user.username },
-    fresh=True,
-  )
-  # create refresh token
-  refresh_token = create_refresh_token(
-    identity={ 'id': user.id, 'username': user.username },
-  )
+class TokenRefresh(Resource):
+  @jwt_required(refresh=True)
+  def post(self):
+    current_user = get_jwt_identity()
+    new_token = create_access_token(identity=current_user, fresh=False)
 
-  return (access_token, refresh_token)
+    return { 'access_token': new_token }, 200

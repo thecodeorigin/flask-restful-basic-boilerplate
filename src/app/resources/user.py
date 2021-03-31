@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt
 
 from ..models.user import UserModel
 
+
 class UserGetMany(Resource):
   @jwt_required()
   def get(self):

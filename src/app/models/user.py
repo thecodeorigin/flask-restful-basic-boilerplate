@@ -5,17 +5,26 @@ class UserModel(db.Model):
   __tablename__ = 'users'
 
   id = db.Column(db.Integer, primary_key=True)
+
+  role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+  
   username = db.Column(db.String(80))
   password = db.Column(db.String(80))
+  
 
-  def __init__(self, _id, username, password):
+  def __init__(self, _id, role_id , username, password):
     self.id = _id
+    self.role_id = role_id
     self.username = username
     self.password = password
 
   def toDict(self):
     return {
       'id': self.id,
+      'role': {
+        'id': self.role.id,
+        'name': self.role.name,
+      },
       'username': self.username,
     }
   
@@ -27,6 +36,23 @@ class UserModel(db.Model):
   def find_by_id(cls, _id):
     return cls.query.filter_by(id=_id).first()
 
+  @classmethod
+  def delete_from_db(cls, user):
+    try:
+      db.session.delete(user)
+    except Exception:
+      db.session.rollback()
+      return False
+    else:
+      db.session.commit()
+      return True
+
   def save_to_db(self):
-    db.session.add(self)
-    db.session.commit()
+    try:
+      db.session.add(self)
+    except Exception:
+      db.session.rollback()
+      return False
+    else:
+      db.session.commit()
+      return True

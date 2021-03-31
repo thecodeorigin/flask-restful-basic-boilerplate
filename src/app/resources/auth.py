@@ -5,6 +5,7 @@ from bcrypt import hashpw, gensalt, checkpw
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, get_jwt
 
 from ..models.user import UserModel
+from ..models.role import RoleModel
 from ...common.helpers.jwt import generateTokens
 from ...common.variables.blocklist import BLOCKLIST
 
@@ -33,12 +34,16 @@ class AuthRegister(Resource):
     password_in_bytes = body['password'].encode('ascii')
     body['password'] = hashpw(password_in_bytes, gensalt())
 
-    user = UserModel(None, **body) # ** is like ... in javascript
+    # find default role
+    default_role = RoleModel.find_by_name('USER')
+    if default_role is None:
+      return { 'error': 'internal_server_error' }, 500
+
+    user = UserModel(None, default_role.id, **body) # ** is like ... in javascript
     user.save_to_db()
 
     access_token, refresh_token = generateTokens(user)
-    return { 
-      'message': 'User created successfully',
+    return {
       'access_token': access_token, 
       'refresh_token': refresh_token,
     }, 201

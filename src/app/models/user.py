@@ -1,3 +1,4 @@
+from bcrypt import checkpw
 from ...database.db import db
 
 class UserModel(db.Model):
@@ -46,6 +47,12 @@ class UserModel(db.Model):
     else:
       db.session.commit()
       return True
+
+  def is_correct_password(self, password):
+    password_in_bytes = password.encode('ascii')
+    hashed_password_in_bytes = self.password.encode('ascii')
+
+    return checkpw(password_in_bytes, hashed_password_in_bytes)
 
   def save_to_db(self):
     try:

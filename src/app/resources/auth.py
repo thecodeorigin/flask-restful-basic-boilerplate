@@ -7,7 +7,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_tok
 
 from ..models.user import UserModel
 from ..models.role import RoleModel
-from ...common.helpers.jwt import generateTokens
+from ...common.helpers.jwt import generate_tokens
 from ...common.variables.blocklist import BLOCKLIST
 from ...common.constants.error_messages import ErrorMessage
 
@@ -44,7 +44,7 @@ class AuthRegister(Resource):
     user = UserModel(None, default_role.id, **body) # ** is like ... in javascript
     user.save_to_db()
 
-    access_token, refresh_token = generateTokens(user)
+    access_token, refresh_token = generate_tokens(user)
     return {
       'access_token': access_token, 
       'refresh_token': refresh_token,
@@ -73,18 +73,12 @@ class AuthLogin(Resource):
     user = UserModel.find_by_username(body['username'])
     
     # check password
-    if user and self.isCorrectPassword(user.password, body['password']):
-      access_token, refresh_token = generateTokens(user)
+    # if user and self.is_correct_password(user.password, body['password']):
+    if user and user.is_correct_password(body['password']):
+      access_token, refresh_token = generate_tokens(user)
       return { 'access_token': access_token, 'refresh_token': refresh_token, }, 200
     
     return { 'message': 'Invalid credentials' }, 401
-  
-  @classmethod
-  def isCorrectPassword(cls, hashed_password, password) -> bool :
-    password_in_bytes = password.encode('ascii')
-    hashed_password_in_bytes = hashed_password.encode('ascii')
-
-    return checkpw(password_in_bytes, hashed_password_in_bytes)
 
 
 class AuthLogout(Resource):

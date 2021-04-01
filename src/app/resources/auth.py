@@ -2,12 +2,14 @@ import sqlite3
 
 from flask_restful import Resource, reqparse
 from bcrypt import hashpw, gensalt, checkpw
+from werkzeug.exceptions import NotFound
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, get_jwt
 
 from ..models.user import UserModel
 from ..models.role import RoleModel
 from ...common.helpers.jwt import generateTokens
 from ...common.variables.blocklist import BLOCKLIST
+from ...common.constants.error_messages import ErrorMessage
 
 class AuthRegister(Resource):
   parser = reqparse.RequestParser()
@@ -37,7 +39,7 @@ class AuthRegister(Resource):
     # find default role
     default_role = RoleModel.find_by_name('USER')
     if default_role is None:
-      return { 'error': 'internal_server_error' }, 500
+      raise NotFound(ErrorMessage.NOT_FOUND)
 
     user = UserModel(None, default_role.id, **body) # ** is like ... in javascript
     user.save_to_db()

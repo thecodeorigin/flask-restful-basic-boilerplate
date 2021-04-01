@@ -1,16 +1,17 @@
 import os
 
-from flask import Flask
+from flask import Flask, request
 
-from src.config.env import config_env
 from src.database.db import db, synchronize_db
-from src.config.env import ConfigEnv
+from src.config.env import config_env, ConfigEnv
 from src.config.jwt import config_jwt
+from src.config.error_handler import config_error_handlers
 from src.router import setup_router
 
 app = Flask(__name__)
 config_env(app)
 config_jwt(app)
+config_error_handlers(app)
 
 setup_router(app)
 

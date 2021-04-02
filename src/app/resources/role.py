@@ -17,11 +17,13 @@ class RoleWithIdParam(Resource):
     help='You need to parse this field'
   )
 
+  @jwt_required()
   def get(self, _id):
     role = RoleModel.find_by_id_or_fail(_id)
     
     return { 'data': role.toDict() }
 
+  @jwt_required()
   def patch(self, _id):
     role = RoleModel.find_by_id_or_fail(_id)
     body = RoleWithIdParam.parser.parse_args()

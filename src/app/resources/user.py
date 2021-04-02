@@ -7,6 +7,14 @@ from flask_jwt_extended import jwt_required, get_jwt
 from ..models.user import UserModel
 
 
+class UserWithIdParam(Resource):
+  @jwt_required()
+  def get(self, _id):
+    user = UserModel.find_by_id_or_fail(_id)
+
+    return { 'data': user.toDict() }
+
+
 class UserGetMany(Resource):
   @jwt_required()
   def get(self):

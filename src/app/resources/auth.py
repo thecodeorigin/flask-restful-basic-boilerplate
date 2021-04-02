@@ -37,7 +37,7 @@ class AuthRegister(Resource):
     body['password'] = hashpw(password_in_bytes, gensalt())
 
     # find default role
-    default_role = RoleModel.find_by_name('USERz')
+    default_role = RoleModel.find_by_name('USER')
     if default_role is None:
       raise NotFoundException
 

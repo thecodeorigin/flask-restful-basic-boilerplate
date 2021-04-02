@@ -1,4 +1,5 @@
 from ...database.db import db
+from ...common.constants.exceptions import NotFoundException
 
 class RoleModel(db.Model):
   __tablename__ = 'roles'
@@ -26,6 +27,15 @@ class RoleModel(db.Model):
   @classmethod
   def find_by_id(cls, _id):
     return cls.query.filter_by(id=_id).first()
+
+  @classmethod
+  def find_by_id_or_fail(cls, _id):
+    found = cls.find_by_id(_id)
+
+    if found is None:
+      raise NotFoundException
+
+    return found
 
   @classmethod
   def delete_from_db(cls, role):

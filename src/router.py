@@ -1,10 +1,12 @@
 from flask_restful import Api
+
 from .app.resources.auth import AuthRegister, AuthLogin, AuthLogout, TokenRefresh
 from .app.resources.user import UserGetMany
 from .app.resources.role import RoleWithIdParam, RoleGetMany
+from .common.variables.errors import errors
 
 def setup_router(app):
-  api = Api(app)
+  api = Api(app, errors=errors)
 
   api.add_resource(AuthRegister, '/auth/register')
   api.add_resource(AuthLogin, '/auth/login')

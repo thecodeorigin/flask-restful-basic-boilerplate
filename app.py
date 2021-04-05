@@ -20,7 +20,7 @@ def synchronize_database():
   if ConfigEnv.ENV == 'development':
     synchronize_db()
 
-if __name__ == '__main__':
-  db.init_app(app)
+db.init_app(app)
 
-  app.run(port=5001, debug=ConfigEnv.DEBUG)
+if __name__ == '__main__':
+  app.run(port=ConfigEnv.PORT, debug=ConfigEnv.DEBUG)

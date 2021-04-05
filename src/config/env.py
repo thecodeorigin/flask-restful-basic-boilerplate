@@ -11,6 +11,7 @@ class ConfigEnv:
   ENV = os.getenv('ENV') or 'development'
   JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
   DEBUG = os.getenv('DEBUG') == 'True'
+  PORT = os.getenv('PORT') or 5000
 
   SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
   SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') or False

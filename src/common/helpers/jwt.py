@@ -5,7 +5,7 @@ class TokenGenerator:
   def generate_tokens(cls, user):
     # create access token
     access_token = create_access_token(
-      identity={ 'id': user.id, 'username': user.username },
+      identity={ 'id': user.id, 'username': user.username, 'role_id': user.role_id },
       fresh=True,
     )
     # create refresh token
